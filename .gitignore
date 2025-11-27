@@ -1,0 +1,31 @@
+# MATLAB generated files
+*.mat
+*.asv
+
+# Generated figures
+figures/*.png
+
+# Temporary files
+*.tmp
+*.temp
+
+# LaTeX build files
+docs/*.pdf
+docs/*.aux
+docs/*.log
+docs/*.out
+docs/*.synctex.gz
+docs/*.fdb_latexmk
+docs/*.fls
+docs/*.bbl
+docs/*.blg
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+*.swp
+*.swo
+*~
