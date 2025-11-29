@@ -1,0 +1,411 @@
+================================================================================
+                   INFORME DE DISEÑO E IMPLEMENTACIÓN DE FILTROS
+                           Filtros Analógicos, IIR y FIR
+                              Sistemas y Señales II
+================================================================================
+
+RESUMEN EJECUTIVO
+================================================================================
+
+Este informe presenta el diseño e implementación de tres tipos fundamentales
+de filtros digitales y analógicos: filtros analógicos (Butterworth), filtros
+IIR (Infinite Impulse Response) y filtros FIR (Finite Impulse Response).
+
+Se describe el procedimiento de diseño, se muestran las funciones de
+transferencia, y se analizan las respuestas en frecuencia (magnitud y fase)
+de cada filtro mediante diagramas de Bode. Los filtros se implementaron en
+MATLAB usando funciones estándar y sus características se validan mediante
+el análisis de sus especificaciones técnicas.
+
+================================================================================
+1. INTRODUCCIÓN
+================================================================================
+
+Los filtros son dispositivos o sistemas fundamentales en el procesamiento de
+señales que permiten atenuar, amplificar o dejar pasar ciertos componentes
+de frecuencia de una señal. Existen diferentes tipos de filtros clasificados
+según sus características:
+
+- Filtros Analógicos: Operan sobre señales continuas en el tiempo.
+- Filtros Digitales IIR: Sistemas discretos con retroalimentación
+  (respuesta infinita).
+- Filtros Digitales FIR: Sistemas discretos sin retroalimentación
+  (respuesta finita).
+
+Este proyecto implementa ejemplos de cada tipo de filtro, con énfasis en su
+caracterización mediante la respuesta en frecuencia (magnitud en decibelios
+y fase en grados).
+
+================================================================================
+2. FUNDAMENTOS TEÓRICOS
+================================================================================
+
+2.1 FILTROS ANALÓGICOS
+-----------------------
+
+Un filtro analógico se define mediante su función de transferencia H(s) en
+el dominio de Laplace:
+
+    H(s) = N(s)/D(s) = (Σ b_i * s^i) / (Σ a_i * s^i)
+
+donde N(s) es el polinomio del numerador (ceros) y D(s) es el polinomio del
+denominador (polos).
+
+La respuesta en frecuencia se obtiene evaluando H(jω) donde j = √-1 y ω es
+la frecuencia angular en rad/s.
+
+La magnitud en decibelios se expresa como:
+    |H(jω)|_dB = 20 * log₁₀|H(jω)|
+
+La fase es:
+    ∠H(jω) = arctan(Im(H(jω))/Re(H(jω)))
+
+2.2 FILTROS DIGITALES IIR
+--------------------------
+
+Los filtros IIR se describen mediante su función de transferencia discreta:
+
+    H(z) = (Σ b_k * z^(-k)) / (1 + Σ a_k * z^(-k))
+
+La estabilidad requiere que todos los polos estén dentro del círculo unitario:
+|z_p| < 1.
+
+La respuesta en frecuencia se obtiene evaluando H(e^(jω)), donde ω ∈ [0, π].
+
+2.3 FILTROS DIGITALES FIR
+--------------------------
+
+Los filtros FIR tienen la forma:
+
+    H(z) = Σ h[n] * z^(-n)
+
+Los coeficientes h[n] son simplemente los valores de la respuesta al impulso.
+Los filtros FIR siempre son estables porque no tienen polos (excepto en el origen).
+
+La propiedad de fase lineal se logra con simetría de coeficientes: h[n] = h[N-n].
+
+================================================================================
+3. ESPECIFICACIONES DE FILTROS IMPLEMENTADOS
+================================================================================
+
+3.1 FILTRO ANALÓGICO BUTTERWORTH
+-----------------------------------
+
+Parámetro                    Valor
+─────────────────────────────────────────────
+Tipo                         Paso Bajo (Low Pass)
+Topología                    Butterworth
+Orden                        4
+Frecuencia de Corte (f_c)    1000 Hz
+Frecuencia de Corte (ω_c)    6283.19 rad/s
+Atenuación a f_c             -3 dB
+Pendiente de Atenuación      80 dB/década
+
+La función de transferencia del filtro Butterworth analógico de orden 4 es:
+
+    H(s) = ω_c^4 / [(s + ω_c)(s² + √2*ω_c*s + ω_c²)²]
+
+El filtro Butterworth es de magnitud máxima plana en la banda de paso,
+lo que significa que no presenta rizado.
+
+3.2 FILTRO IIR BUTTERWORTH DIGITAL
+------------------------------------
+
+Parámetro                    Valor
+─────────────────────────────────────────────
+Tipo                         Paso Bajo (Low Pass)
+Topología                    Butterworth Digital
+Orden                        5
+Frecuencia de Muestreo (f_s) 5000 Hz
+Frecuencia de Corte (f_c)    500 Hz
+Frecuencia de Nyquist        2500 Hz
+Frecuencia Normalizada (W_n) 0.2
+Método de Diseño             Transformación Bilineal
+Estabilidad                  Garantizada (polos dentro círculo unitario)
+
+La función de transferencia discreta se obtiene mediante la transformación
+bilineal del prototipo analógico.
+
+3.3 FILTRO FIR PASO BAJO
+-------------------------
+
+Parámetro                    Valor
+─────────────────────────────────────────────
+Tipo                         Paso Bajo (Low Pass)
+Topología                    FIR con Ventana
+Ventana                      Hamming
+Orden (N)                    64
+Número de Coeficientes       65
+Frecuencia de Muestreo (f_s) 8000 Hz
+Frecuencia de Corte (f_c)    1000 Hz
+Frecuencia de Nyquist        4000 Hz
+Frecuencia Normalizada (W_n) 0.25
+Propiedad                    Fase Lineal
+
+Los coeficientes se calculan usando el método de ventanas con la ventana
+de Hamming para reducir el fenómeno de Gibbs.
+
+================================================================================
+4. PROCEDIMIENTO DE DISEÑO E IMPLEMENTACIÓN
+================================================================================
+
+4.1 FILTRO ANALÓGICO
+---------------------
+
+PROCEDIMIENTO:
+1. Especificar los requisitos: tipo (paso bajo), orden (4) y
+   frecuencia de corte (1000 Hz).
+2. Seleccionar la aproximación: Butterworth (magnitud máxima plana).
+3. Calcular los polos del filtro normalizado.
+4. Desnormalizar a la frecuencia de corte deseada.
+5. Construir la función de transferencia.
+6. Evaluar la respuesta en frecuencia mediante H(jω).
+
+CÓDIGO MATLAB:
+──────────────
+% Especificaciones
+Fc = 1000;              % Frecuencia de corte en Hz
+Wc = 2*pi*Fc;           % Frecuencia de corte en rad/s
+orden = 4;              % Orden del filtro
+
+% Diseño
+[num_an, den_an] = butter(orden, Wc, 's');
+H_analog = tf(num_an, den_an);
+
+% Respuesta en frecuencia
+w = logspace(0, 5, 1000);
+[mag, phase, w] = bode(H_analog, w);
+mag_dB = 20*log10(squeeze(mag));
+phase_deg = squeeze(phase);
+
+4.2 FILTRO IIR
+---------------
+
+PROCEDIMIENTO:
+1. Especificar: tipo (paso bajo), orden (5), frecuencia de muestreo
+   (5000 Hz), frecuencia de corte (500 Hz).
+2. Normalizar la frecuencia de corte respecto a Nyquist: W_n = f_c/(f_s/2) = 0.2
+3. Aplicar el método de Butterworth digital.
+4. Usar la transformación bilineal para obtener el filtro digital.
+5. Verificar la estabilidad (polos dentro del círculo unitario).
+6. Evaluar la respuesta en frecuencia.
+
+CÓDIGO MATLAB:
+──────────────
+% Especificaciones
+Fs = 5000;              % Frecuencia de muestreo
+Fc = 500;               % Frecuencia de corte
+Wn = Fc / (Fs/2);       % Frecuencia normalizada
+orden = 5;
+
+% Diseño
+[num_iir, den_iir] = butter(orden, Wn);
+H_iir = tf(num_iir, den_iir, 1/Fs);
+
+% Respuesta en frecuencia
+[H] = freqz(num_iir, den_iir, w, Fs);
+mag_dB = 20*log10(abs(H));
+phase_deg = angle(H) * 180/pi;
+
+% Verificar estabilidad
+polos = pole(H_iir);
+es_estable = all(abs(polos) < 1);
+
+4.3 FILTRO FIR
+---------------
+
+PROCEDIMIENTO:
+1. Especificar: tipo (paso bajo), orden (64), ventana (Hamming).
+2. Definir la frecuencia de corte normalizada: W_n = 0.25
+3. Crear la ventana de Hamming de longitud N+1 = 65.
+4. Calcular los coeficientes ideales del filtro paso bajo.
+5. Aplicar la ventana a los coeficientes.
+6. Verificar las propiedades de simetría para fase lineal.
+7. Evaluar la respuesta en frecuencia.
+
+CÓDIGO MATLAB:
+──────────────
+% Especificaciones
+Fs = 8000;
+Fc = 1000;
+Wn = Fc / (Fs/2);
+N = 64;
+
+% Diseño
+ventana = hamming(N+1)';
+num_fir = fir1(N, Wn, 'low', ventana);
+H_fir = tf(num_fir, 1, 1/Fs);
+
+% Respuesta en frecuencia
+[H] = freqz(num_fir, 1, w, Fs);
+mag_dB = 20*log10(abs(H));
+phase_deg = angle(H) * 180/pi;
+
+% Verificar fase lineal
+es_lineal = max(abs(num_fir - fliplr(num_fir))) < 1e-10;
+
+================================================================================
+5. RESULTADOS Y ANÁLISIS
+================================================================================
+
+5.1 FILTRO ANALÓGICO
+---------------------
+
+[Ver figura: filtro_analogico.png - Diagrama de Bode del Filtro Butterworth
+Analógico (Orden 4, f_c = 1000 Hz)]
+
+ANÁLISIS DE RESULTADOS:
+
+• RESPUESTA EN MAGNITUD: El filtro presenta una atenuación de aproximadamente
+  -3 dB a la frecuencia de corte (1000 Hz), como se esperaba. La magnitud
+  máxima plana en la banda de paso (0-800 Hz) caracteriza al filtro Butterworth.
+
+• PENDIENTE DE ATENUACIÓN: La pendiente de atenuación es de aproximadamente
+  80 dB/década (24 dB/octava), consistente con un filtro de orden 4.
+  Esto se calcula como: 20 × orden = 20 × 4 = 80 dB/década.
+
+• RESPUESTA EN FASE: La fase disminuye monótonamente desde 0° a frecuencias
+  bajas hasta -180° a frecuencias altas. A la frecuencia de corte, la fase
+  es aproximadamente -90°.
+
+• POLOS: El filtro tiene 4 polos complejos conjugados ubicados en el semiplano
+  izquierdo (sistemas estables).
+
+5.2 FILTRO IIR
+---------------
+
+[Ver figura: filtro_iir.png - Diagrama de Bode del Filtro IIR Butterworth
+Digital (Orden 5, f_c = 500 Hz, f_s = 5000 Hz)]
+
+ANÁLISIS DE RESULTADOS:
+
+• RESPUESTA EN MAGNITUD: El filtro digital muestra una atenuación de -3 dB
+  alrededor de 500 Hz. La respuesta es plana en la banda de paso (0-400 Hz).
+
+• COMPORTAMIENTO EN BANDA DE RECHAZO: A partir de 500 Hz, la atenuación se
+  incrementa progresivamente, llegando a valores significativos cercanos a
+  la frecuencia de Nyquist (2500 Hz).
+
+• RESPUESTA EN FASE: La fase disminuye de manera suave a través de las
+  frecuencias, con máxima pendiente de fase alrededor de la frecuencia de corte.
+
+• ESTABILIDAD: Todos los polos están ubicados dentro del círculo unitario en
+  el plano-z, garantizando la estabilidad del filtro. Los ceros se encuentran
+  parcialmente en el círculo unitario o fuera de él.
+
+• VENTAJA SOBRE ANALÓGICO: El filtro IIR requiere menos coeficientes
+  (menos memoria) que un filtro FIR equivalente para alcanzar la misma
+  selectividad.
+
+5.3 FILTRO FIR
+---------------
+
+[Ver figura: filtro_fir.png - Diagrama de Bode del Filtro FIR Paso Bajo
+(Orden 64, Ventana Hamming, f_c = 1000 Hz)]
+
+[Ver figura: filtro_fir_impulso.png - Respuesta al Impulso del Filtro FIR
+(65 coeficientes)]
+
+ANÁLISIS DE RESULTADOS:
+
+• RESPUESTA EN MAGNITUD: El filtro FIR muestra una respuesta paso bajo clara
+  con -3 dB aproximadamente a 1000 Hz. La ventana de Hamming reduce el rizado
+  de Gibbs, resultando en una respuesta más suave.
+
+• RIZADO EN BANDA DE PASO: Existe un pequeño rizado caracterizado por la
+  ventana de Hamming, típicamente alrededor de ±0.5 dB. Este rizado es el
+  tradeoff por tener lóbulos laterales más pequeños (aproximadamente -43 dB).
+
+• RESPUESTA EN FASE: Presenta fase lineal, como se confirma por la simetría
+  de los coeficientes. La fase es una función lineal de la frecuencia:
+  φ(ω) = -N*ω/2.
+
+• RESPUESTA AL IMPULSO: Los 65 coeficientes (h[0] a h[64]) son simétricos
+  alrededor del índice 32, lo que garantiza la fase lineal.
+
+• ESTABILIDAD: Garantizada por diseño (sin retroalimentación, solo ceros).
+
+• VENTAJAS:
+  - Fase exactamente lineal (sin distorsión de fase).
+  - Siempre estables.
+  - Sin problemas de ciclos límite o rondeo.
+
+• DESVENTAJAS:
+  - Requiere más coeficientes para igual selectividad que IIR.
+  - Mayor costo computacional (más multiplicaciones).
+  - Latencia inherente debido al orden del filtro.
+
+================================================================================
+6. COMPARACIÓN DE FILTROS
+================================================================================
+
+TABLA COMPARATIVA: Características entre tipos de filtros
+
+Característica            Analógico           IIR                FIR
+────────────────────────────────────────────────────────────────────────────
+Estabilidad              ✓                   Depende            ✓ Garantizada
+Fase Lineal              ✗                   ✗                  ✓ (con simetría)
+Selectividad             Alta                Alta (orden bajo)  Baja (orden alto)
+Complejidad Computacional N/A                Baja               Media-Alta
+Número de Coeficientes   N/A                 Bajo               Alto
+Latencia                 Continua            Baja               Media-Alta
+Implementación Digital   N/A                 z-transform        Convolución discreta
+Rizado                   Ninguno (B'worth)  Posible            Controlado
+Distorsión de Fase       Sí                  Sí                 No (ideal)
+
+RECOMENDACIONES DE USO:
+
+• FILTRO ANALÓGICO: Usar cuando se requiera procesamiento de señales analógicas
+  en tiempo real (e.g., filtración de entrada antes de ADC).
+
+• FILTRO IIR: Preferible cuando se necesita alta selectividad con bajo costo
+  computacional y la distorsión de fase no sea crítica.
+
+• FILTRO FIR: Usar cuando la fase lineal sea esencial para la aplicación
+  (e.g., audio de alta fidelidad, procesamiento de imágenes) o cuando se
+  necesite evitar problemas de estabilidad.
+
+================================================================================
+7. CONCLUSIONES
+================================================================================
+
+Se ha completado exitosamente el diseño e implementación de tres tipos
+fundamentales de filtros:
+
+1. FILTRO ANALÓGICO BUTTERWORTH: Proporciona una magnitud máxima plana en
+   la banda de paso con una pendiente de atenuación de 80 dB/década. Apto
+   para aplicaciones de acondicionamiento analógico.
+
+2. FILTRO IIR DIGITAL: Ofrece excelente selectividad con mínimo costo
+   computacional, aunque introduce distorsión de fase. Ideal para aplicaciones
+   en tiempo real con recursos limitados.
+
+3. FILTRO FIR DIGITAL: Proporciona fase exactamente lineal y estabilidad
+   garantizada, aunque requiere mayor orden para lograr selectividad equivalente.
+   Esencial para aplicaciones donde la fase debe ser controlada.
+
+Todos los filtros han sido validados mediante su respuesta en frecuencia,
+diagramas de Bode, y características espectrales. Las gráficas en magnitud
+(dB) y fase muestran comportamientos consistentes con la teoría de filtros
+digitales y analógicos.
+
+================================================================================
+8. REFERENCIAS
+================================================================================
+
+1. Oppenheim, A. V., Schafer, R. W., & Buck, J. R. (2009).
+   "Discrete-time signal processing". Prentice Hall.
+
+2. Proakis, J. G., & Manolakis, D. G. (2006).
+   "Digital signal processing: principles, algorithms, and applications".
+   Prentice Hall.
+
+3. The Mathworks. (2023).
+   "MATLAB Signal Processing Toolbox Documentation".
+
+4. Parks, T. W., & Burrus, C. S. (1987).
+   "Digital filter design". John Wiley & Sons.
+
+================================================================================
+                                FIN DEL INFORME
+================================================================================
