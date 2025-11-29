@@ -50,7 +50,23 @@
 \vspace{1cm}
 \textbf{Sistemas y Señales II}}
 
-\author{}
+\author{
+    \textbf{Autor 1}\\
+    Johan Arturo Barajas Herrera\\
+    \texttt{jbarajash@unal.edu.co}\\
+    \vspace{0.5cm}
+    \and
+    \textbf{Autor 2}\\
+    Ariel Giovanni Cardenas Santisteban\\
+    \texttt{arcardenass@unal.edu.co}\\
+    \vspace{0.5cm}
+    \and
+    \textbf{Autor 3}\\
+    Dilan Santiago Porras Cortés\\
+    \texttt{diporrasc@unal.edu.co}
+}
+
+
 \date{\today}
 
 \begin{document}
@@ -80,61 +96,12 @@ clasificados según sus características:
 
 \begin{itemize}
     \item \textbf{Filtros Analógicos}: Operan sobre señales continuas en el tiempo.
-    \item \textbf{Filtros Digitales IIR}: Sistemas discretos con retroalimentación (respuesta infinita).
-    \item \textbf{Filtros Digitales FIR}: Sistemas discretos sin retroalimentación (respuesta finita).
+    \item \textbf{Filtros Digitales IIR}: Sistemas discretos mas eficientes caracterizados por una funcion de transferencia con polos y ceros finitos.
+    \item \textbf{Filtros Digitales FIR}: Sistemas discretos caracterizados por una funcion de transferencia con todos sus polos en el origen e influenciados unicamente por sus ceros.
 \end{itemize}
 
 Este proyecto implementa ejemplos de cada tipo de filtro, con énfasis en su caracterización mediante la respuesta
 en frecuencia (magnitud en decibelios y fase en grados).
-
-\section{Fundamentos Teóricos}
-
-\subsection{Filtros Analógicos}
-
-Un filtro analógico se define mediante su función de transferencia $H(s)$ en el dominio de Laplace:
-
-\begin{equation}
-H(s) = \frac{N(s)}{D(s)} = \frac{\sum_{i=0}^{M} b_i s^i}{\sum_{i=0}^{N} a_i s^i}
-\end{equation}
-
-donde $N(s)$ es el polinomio del numerador (ceros) y $D(s)$ es el polinomio del denominador (polos).
-
-La respuesta en frecuencia se obtiene evaluando $H(j\omega)$ donde $j = \sqrt{-1}$ y $\omega$ es la frecuencia angular en rad/s.
-
-La \textbf{magnitud} en decibelios se expresa como:
-\begin{equation}
-|H(j\omega)|_{dB} = 20 \log_{10}|H(j\omega)|
-\end{equation}
-
-La \textbf{fase} es:
-\begin{equation}
-\angle H(j\omega) = \arctan\left(\frac{\text{Im}(H(j\omega))}{\text{Re}(H(j\omega))}\right)
-\end{equation}
-
-\subsection{Filtros Digitales IIR}
-
-Los filtros IIR se describen mediante su función de transferencia discreta:
-
-\begin{equation}
-H(z) = \frac{\sum_{k=0}^{M} b_k z^{-k}}{1 + \sum_{k=1}^{N} a_k z^{-k}}
-\end{equation}
-
-La estabilidad requiere que todos los polos estén dentro del círculo unitario: $|z_p| < 1$.
-
-La respuesta en frecuencia se obtiene evaluando $H(e^{j\omega})$, donde $\omega \in [0, \pi]$.
-
-\subsection{Filtros Digitales FIR}
-
-Los filtros FIR tienen la forma:
-
-\begin{equation}
-H(z) = \sum_{n=0}^{N} h[n] z^{-n}
-\end{equation}
-
-Los coeficientes $h[n]$ son simplemente los valores de la respuesta al impulso. Los filtros FIR siempre son
-estables porque no tienen polos (excepto en el origen).
-
-La propiedad de fase lineal se logra con simetría de coeficientes: $h[n] = h[N-n]$.
 
 \section{Especificaciones de Filtros Implementados}
 
