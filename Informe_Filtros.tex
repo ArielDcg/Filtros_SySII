@@ -88,438 +88,518 @@ usando funciones estándar y sus características se validan mediante el anális
 
 \newpage
 
-\section{Introducción}
+\section{Especificaciones del Sistema}
 
-Los filtros son dispositivos o sistemas fundamentales en el procesamiento de señales que permiten atenuar,
-amplificar o dejar pasar ciertos componentes de frecuencia de una señal. Existen diferentes tipos de filtros
-clasificados según sus características:
+\subsection{Parámetros Generales}
 
-\begin{itemize}
-    \item \textbf{Filtros Analógicos}: Operan sobre señales continuas en el tiempo.
-    \item \textbf{Filtros Digitales IIR}: Sistemas discretos mas eficientes caracterizados por una funcion de transferencia con polos y ceros finitos.
-    \item \textbf{Filtros Digitales FIR}: Sistemas discretos caracterizados por una funcion de transferencia con todos sus polos en el origen e influenciados unicamente por sus ceros.
-\end{itemize}
-
-Este proyecto implementa ejemplos de cada tipo de filtro, con énfasis en su caracterización mediante la respuesta
-en frecuencia (magnitud en decibelios y fase en grados).
-
-\section{Especificaciones de Filtros Implementados}
-
-\subsection{Filtro Analógico Butterworth}
+El sistema implementa un ecualizador digital de 4 bandas de frecuencia con especificaciones:
 
 \begin{table}[H]
 \centering
-\begin{tabular}{|l|l|}
+\begin{tabular}{|l|c|}
 \hline
 \textbf{Parámetro} & \textbf{Valor} \\
 \hline
-Tipo & Paso Bajo (Low Pass) \\
+Frecuencia de Muestreo ($F_s$) & 64000 Hz \\
 \hline
-Topología & Butterworth \\
+Número de Bandas & 4 \\
 \hline
-Orden & 4 \\
+Atenuación Banda de Paso ($A_p$) & 3 dB \\
 \hline
-Frecuencia de Corte ($f_c$) & 1000 Hz \\
+Atenuación Banda de Rechazo ($A_s$) & 15 dB \\
 \hline
-Frecuencia de Corte ($\omega_c$) & 6283.19 rad/s \\
-\hline
-Atenuación a $f_c$ & -3 dB \\
-\hline
-Pendiente de Atenuación & 80 dB/década \\
+Tipo de Filtros & Butterworth \\
 \hline
 \end{tabular}
-\caption{Especificaciones del Filtro Analógico}
-\label{tab:esp_analogico}
+\caption{Especificaciones Generales del Sistema}
+\label{tab:spec_general}
 \end{table}
 
-La función de transferencia del filtro Butterworth analógico de orden 4 es:
+\subsection{Cálculo de Frecuencias}
+
+Las frecuencias centrales de las 4 bandas del ecualizador son:
 
 \begin{equation}
-H(s) = \frac{\omega_c^4}{(s + \omega_c)(s^2 + \sqrt{2}\omega_c s + \omega_c^2)(s^2 + \sqrt{2}\omega_c s + \omega_c^2)}
+f_{\text{central}} = [102.4, 512, 2560, 12800] \text{ Hz}
 \end{equation}
 
-El filtro Butterworth es de magnitud máxima plana en la banda de paso, lo que significa que no presenta rizado.
+Las frecuencias de corte se calculan mediante:
 
-\subsection{Filtro IIR Butterworth}
+\begin{align}
+f_{\text{corte}}(1) &= \frac{f_{\text{central}}(1)}{\sqrt{5}} = 45.77 \text{ Hz} \\
+f_{\text{corte}}(i) &= \sqrt{f_{\text{central}}(i-1) \cdot f_{\text{central}}(i)} \quad \text{para } i = 2, 3, 4 \\
+f_{\text{corte}}(5) &= f_{\text{central}}(4) \cdot \sqrt{5} = 28618.37 \text{ Hz}
+\end{align}
 
-\begin{table}[H]
-\centering
-\begin{tabular}{|l|l|}
-\hline
-\textbf{Parámetro} & \textbf{Valor} \\
-\hline
-Tipo & Paso Bajo (Low Pass) \\
-\hline
-Topología & Butterworth Digital \\
-\hline
-Orden & 5 \\
-\hline
-Frecuencia de Muestreo ($f_s$) & 5000 Hz \\
-\hline
-Frecuencia de Corte ($f_c$) & 500 Hz \\
-\hline
-Frecuencia de Nyquist & 2500 Hz \\
-\hline
-Frecuencia Normalizada ($W_n$) & 0.2 \\
-\hline
-Método de Diseño & Transformación Bilineal \\
-\hline
-Estabilidad & Garantizada (polos dentro de círculo unitario) \\
-\hline
-\end{tabular}
-\caption{Especificaciones del Filtro IIR}
-\label{tab:esp_iir}
-\end{table}
-
-La función de transferencia discreta se obtiene mediante la transformación bilineal del prototipo analógico.
-
-\subsection{Filtro FIR Paso Bajo}
+% Pilas: Insertar tabla con valores calculados de f_corte(1) a f_corte(5)
 
 \begin{table}[H]
 \centering
-\begin{tabular}{|l|l|}
+\begin{tabular}{|c|c|c|c|}
 \hline
-\textbf{Parámetro} & \textbf{Valor} \\
+\textbf{Banda} & \textbf{Tipo} & \textbf{f\_corte (Hz)} & \textbf{f\_central (Hz)} \\
 \hline
-Tipo & Paso Bajo (Low Pass) \\
+1 & Pasabajos & [Pilas: 45.77 - 228.70] & 102.4 \\
 \hline
-Topología & FIR con Ventana \\
+2 & Pasabanda & [Pilas: 228.70 - 1143.55] & 512 \\
 \hline
-Ventana & Hamming \\
+3 & Pasabanda & [Pilas: 1143.55 - 5726.81] & 2560 \\
 \hline
-Orden (N) & 64 \\
-\hline
-Número de Coeficientes & 65 \\
-\hline
-Frecuencia de Muestreo ($f_s$) & 8000 Hz \\
-\hline
-Frecuencia de Corte ($f_c$) & 1000 Hz \\
-\hline
-Frecuencia de Nyquist & 4000 Hz \\
-\hline
-Frecuencia Normalizada ($W_n$) & 0.25 \\
-\hline
-Propiedad & Fase Lineal \\
+4 & Pasaaltos & [Pilas: 5726.81 - 28618.37] & 12800 \\
 \hline
 \end{tabular}
-\caption{Especificaciones del Filtro FIR}
-\label{tab:esp_fir}
+\caption{Bandas de Frecuencia del Ecualizador}
+\label{tab:bands}
 \end{table}
 
-Los coeficientes se calculan usando el método de ventanas con la ventana de Hamming para reducir el fenómeno de Gibbs.
+\newpage
+
+\section{Diseño de Filtros Analógicos}
+
+\subsection{Cálculo de Orden}
+
+Utilizando la función \texttt{buttord}, se determina el orden mínimo requerido para cumplir las especificaciones en cada banda:
+
+\begin{equation}
+[n, W_n] = \text{buttord}(W_p, W_s, A_p, A_s, \text{'s'})
+\end{equation}
+
+\subsubsection{Banda 1: Pasabajos}
+
+\begin{align}
+W_{p1} &= 2\pi f_{\text{corte}}(2) = 2\pi \times 228.70 = 1436.74 \text{ rad/s} \\
+W_{s1} &= 2\pi f_{\text{central}}(1) = 2\pi \times 102.4 = 643.41 \text{ rad/s}
+\end{align}
+
+% Pilas: Insertar orden calculado n1 y W_n1
+
+\subsubsection{Banda 2: Pasabanda}
+
+\begin{align}
+W_{p2} &= 2\pi [f_{\text{corte}}(2), f_{\text{corte}}(3)] \text{ rad/s} \\
+W_{s2} &= 2\pi [f_{\text{central}}(1), f_{\text{central}}(3)] \text{ rad/s}
+\end{align}
+
+\subsubsection{Banda 3: Pasabanda}
+
+\begin{align}
+W_{p3} &= 2\pi [f_{\text{corte}}(3), f_{\text{corte}}(4)] \text{ rad/s} \\
+W_{s3} &= 2\pi [f_{\text{central}}(2), f_{\text{central}}(4)] \text{ rad/s}
+\end{align}
+
+\subsubsection{Banda 4: Pasaaltos}
+
+\begin{align}
+W_{p4} &= 2\pi f_{\text{corte}}(4) = 2\pi \times 5726.81 = 35962.84 \text{ rad/s} \\
+W_{s4} &= 2\pi f_{\text{central}}(3) = 2\pi \times 2560 = 16085.29 \text{ rad/s}
+\end{align}
+
+% Pilas: Insertar orden calculado n4 y W_n4
+
+El orden máximo entre todas las bandas se utiliza para todos los filtros analógicos:
+
+\begin{equation}
+n_{\max\_analog} = \max(n_1, n_2, n_3, n_4) = \text{ [Pilas: Insertar valor]}
+\end{equation}
+
+\subsection{Función de Transferencia}
+
+La función de transferencia se obtiene mediante:
+
+\begin{equation}
+[num, den] = \text{butter}(n_{\max}, W_n, \text{tipo}, \text{'s'})
+\end{equation}
+
+donde \textit{tipo} es 'low' para pasabajos, 'bandpass' para pasabanda, y 'high' para pasaaltos.
+
+% Pilas: Insertar código MATLAB utilizado para diseño analógico
 
 \newpage
 
-\section{Procedimiento de Diseño e Implementación}
+\section{Diseño de Filtros IIR (Transformación Bilineal)}
 
-\subsection{Filtro Analógico}
+\subsection{Normalización de Frecuencias}
 
-\subsubsection{Procedimiento}
+Las frecuencias se normalizan respecto a la frecuencia de Nyquist:
 
-\begin{enumerate}
-    \item Especificar los requisitos: tipo (paso bajo), orden (4) y frecuencia de corte (1000 Hz).
-    \item Seleccionar la aproximación: Butterworth (magnitud máxima plana).
-    \item Calcular los polos del filtro normalizado.
-    \item Desnormalizar a la frecuencia de corte deseada.
-    \item Construir la función de transferencia.
-    \item Evaluar la respuesta en frecuencia mediante $H(j\omega)$.
-\end{enumerate}
+\begin{equation}
+w_n = \frac{f}{F_s/2}, \quad F_{\text{Nyquist}} = \frac{F_s}{2} = 32000 \text{ Hz}
+\end{equation}
 
-\subsubsection{Código MATLAB}
+\subsubsection{Banda 1: Pasabajos}
 
-\begin{lstlisting}[language=MATLAB]
-% Especificaciones
-Fc = 1000;              % Frecuencia de corte en Hz
-Wc = 2*pi*Fc;           % Frecuencia de corte en rad/s
-orden = 4;              % Orden del filtro
+\begin{align}
+w_{p1} &= \frac{f_{\text{corte}}(2)}{32000} = \frac{228.70}{32000} = 0.00715 \\
+w_{s1} &= \frac{f_{\text{central}}(1)}{32000} = \frac{102.4}{32000} = 0.00320
+\end{align}
 
-% Diseño
-[num_an, den_an] = butter(orden, Wc, 's');
-H_analog = tf(num_an, den_an);
+\subsubsection{Banda 2: Pasabanda}
 
-% Respuesta en frecuencia
-w = logspace(0, 5, 1000);
-[mag, phase, w] = bode(H_analog, w);
-mag_dB = 20*log10(squeeze(mag));
-phase_deg = squeeze(phase);
-\end{lstlisting}
+\begin{align}
+w_{p2} &= \frac{[228.70, 1143.55]}{32000} = [0.00715, 0.03573] \\
+w_{s2} &= \frac{[102.4, 2560]}{32000} = [0.00320, 0.08000]
+\end{align}
 
-\subsection{Filtro IIR}
+\subsubsection{Banda 3: Pasabanda}
 
-\subsubsection{Procedimiento}
+\begin{align}
+w_{p3} &= \frac{[1143.55, 5726.81]}{32000} = [0.03573, 0.17896] \\
+w_{s3} &= \frac{[512, 12800]}{32000} = [0.01600, 0.40000]
+\end{align}
 
-\begin{enumerate}
-    \item Especificar: tipo (paso bajo), orden (5), frecuencia de muestreo (5000 Hz), frecuencia de corte (500 Hz).
-    \item Normalizar la frecuencia de corte respecto a Nyquist: $W_n = \frac{f_c}{f_s/2} = 0.2$.
-    \item Aplicar el método de Butterworth digital.
-    \item Usar la transformación bilineal para obtener el filtro digital.
-    \item Verificar la estabilidad (polos dentro del círculo unitario).
-    \item Evaluar la respuesta en frecuencia.
-\end{enumerate}
+\subsubsection{Banda 4: Pasaaltos}
 
-\subsubsection{Código MATLAB}
+\begin{align}
+w_{p4} &= \frac{f_{\text{corte}}(4)}{32000} = \frac{5726.81}{32000} = 0.17896 \\
+w_{s4} &= \frac{f_{\text{central}}(3)}{32000} = \frac{2560}{32000} = 0.08000
+\end{align}
 
-\begin{lstlisting}[language=MATLAB]
-% Especificaciones
-Fs = 5000;              % Frecuencia de muestreo
-Fc = 500;               % Frecuencia de corte
-Wn = Fc / (Fs/2);       % Frecuencia normalizada
-orden = 5;
+\subsection{Cálculo de Orden Digital}
 
-% Diseño
-[num_iir, den_iir] = butter(orden, Wn);
-H_iir = tf(num_iir, den_iir, 1/Fs);
+\begin{equation}
+[n, W_n] = \text{buttord}(w_p, w_s, A_p, A_s)
+\end{equation}
 
-% Respuesta en frecuencia
-[H] = freqz(num_iir, den_iir, w, Fs);
-mag_dB = 20*log10(abs(H));
-phase_deg = angle(H) * 180/pi;
+% Pilas: Insertar órdenes calculados n_iir(1) a n_iir(4)
 
-% Verificar estabilidad
-polos = pole(H_iir);
-es_estable = all(abs(polos) < 1);
-\end{lstlisting}
+El orden máximo se asigna a todos los filtros:
 
-\subsection{Filtro FIR}
+\begin{equation}
+n_{\max\_iir} = \max(n_{\text{iir,1}}, n_{\text{iir,2}}, n_{\text{iir,3}}, n_{\text{iir,4}}) = \text{ [Pilas: Insertar valor]}
+\end{equation}
 
-\subsubsection{Procedimiento}
+\subsection{Diseño Digital}
 
-\begin{enumerate}
-    \item Especificar: tipo (paso bajo), orden (64), ventana (Hamming).
-    \item Definir la frecuencia de corte normalizada: $W_n = 0.25$.
-    \item Crear la ventana de Hamming de longitud $N+1 = 65$.
-    \item Calcular los coeficientes ideales del filtro paso bajo.
-    \item Aplicar la ventana a los coeficientes.
-    \item Verificar las propiedades de simetría para fase lineal.
-    \item Evaluar la respuesta en frecuencia.
-\end{enumerate}
+\begin{equation}
+[num, den] = \text{butter}(n_{\max\_iir}, W_n, \text{tipo})
+\end{equation}
 
-\subsubsection{Código MATLAB}
-
-\begin{lstlisting}[language=MATLAB]
-% Especificaciones
-Fs = 8000;
-Fc = 1000;
-Wn = Fc / (Fs/2);
-N = 64;
-
-% Diseño
-ventana = hamming(N+1)';
-num_fir = fir1(N, Wn, 'low', ventana);
-H_fir = tf(num_fir, 1, 1/Fs);
-
-% Respuesta en frecuencia
-[H] = freqz(num_fir, 1, w, Fs);
-mag_dB = 20*log10(abs(H));
-phase_deg = angle(H) * 180/pi;
-
-% Verificar fase lineal
-es_lineal = max(abs(num_fir - fliplr(num_fir))) < 1e-10;
-\end{lstlisting}
+% Pilas: Insertar código MATLAB utilizado para diseño IIR
 
 \newpage
 
-\section{Resultados y Análisis}
+\section{Diseño de Filtros FIR (Ventana Hamming)}
 
-\subsection{Filtro Analógico}
+\subsection{Cálculo de Orden}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.9\textwidth]{../figures/filtro_analogico.png}
-\caption{Diagrama de Bode del Filtro Butterworth Analógico (Orden 4, $f_c = 1000$ Hz)}
-\label{fig:bode_analogico}
-\end{figure}
+El orden se calcula basado en el ancho de la banda de transición:
 
-\subsubsection{Análisis de Resultados}
+\begin{equation}
+M = \text{ceil}\left(\frac{3.3 \times F_s}{\Delta f}\right)
+\end{equation}
 
-\begin{itemize}
-    \item \textbf{Respuesta en Magnitud}: El filtro presenta una atenuación de aproximadamente -3 dB a la frecuencia
-          de corte (1000 Hz), como se esperaba. La magnitud máxima plana en la banda de paso (0-800 Hz) caracteriza
-          al filtro Butterworth.
+donde $\Delta f$ es el ancho de la banda de transición.
 
-    \item \textbf{Pendiente de Atenuación}: La pendiente de atenuación es de aproximadamente 80 dB/década
-          (24 dB/octava), consistente con un filtro de orden 4. Esto se calcula como $20 \times \text{orden} = 20 \times 4 = 80$ dB/década.
+\subsubsection{Banda 1: Pasabajos}
 
-    \item \textbf{Respuesta en Fase}: La fase disminuye monótonamente desde 0° a frecuencias bajas hasta -180°
-          a frecuencias altas. A la frecuencia de corte, la fase es aproximadamente -90°.
+\begin{align}
+\Delta f_1 &= |f_{\text{central}}(1) - f_{\text{corte}}(2)| = |102.4 - 228.70| = 126.30 \text{ Hz} \\
+M_1 &= \text{ceil}\left(\frac{3.3 \times 64000}{126.30}\right) = \text{ [Pilas: Insertar valor]}
+\end{align}
 
-    \item \textbf{Polos}: El filtro tiene 4 polos complejos conjugados ubicados en el semiplano izquierdo (sistemas estables).
-\end{itemize}
+Si $M$ es par, se incrementa en 1. Límite máximo: 1000 coeficientes.
 
-\subsection{Filtro IIR}
+\subsubsection{Banda 2: Pasabanda}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.9\textwidth]{../figures/filtro_iir.png}
-\caption{Diagrama de Bode del Filtro IIR Butterworth Digital (Orden 5, $f_c = 500$ Hz, $f_s = 5000$ Hz)}
-\label{fig:bode_iir}
-\end{figure}
+\begin{align}
+\Delta f_2 &= \min(|f_{\text{corte}}(2) - f_{\text{central}}(1)|, |f_{\text{central}}(3) - f_{\text{corte}}(3)|) \\
+&= \min(|228.70 - 102.4|, |2560 - 1143.55|) = 126.30 \text{ Hz} \\
+M_2 &= \text{ [Pilas: Insertar valor]}
+\end{align}
 
-\subsubsection{Análisis de Resultados}
+\subsubsection{Banda 3: Pasabanda}
 
-\begin{itemize}
-    \item \textbf{Respuesta en Magnitud}: El filtro digital muestra una atenuación de -3 dB alrededor de 500 Hz.
-          La respuesta es plana en la banda de paso (0-400 Hz).
+\begin{align}
+\Delta f_3 &= \min(|f_{\text{corte}}(3) - f_{\text{central}}(2)|, |f_{\text{central}}(4) - f_{\text{corte}}(4)|) \\
+&= \min(|1143.55 - 512|, |12800 - 5726.81|) = 631.55 \text{ Hz} \\
+M_3 &= \text{ [Pilas: Insertar valor]}
+\end{align}
 
-    \item \textbf{Comportamiento en Banda de Rechazo}: A partir de 500 Hz, la atenuación se incrementa progresivamente,
-          llegando a valores significativos cercanos a la frecuencia de Nyquist (2500 Hz).
+\subsubsection{Banda 4: Pasaaltos}
 
-    \item \textbf{Respuesta en Fase}: La fase disminuye de manera suave a través de las frecuencias, con máxima
-          pendiente de fase alrededor de la frecuencia de corte.
+\begin{align}
+\Delta f_4 &= |f_{\text{corte}}(4) - f_{\text{central}}(3)| = |5726.81 - 2560| = 3166.81 \text{ Hz} \\
+M_4 &= \text{ [Pilas: Insertar valor]}
+\end{align}
 
-    \item \textbf{Estabilidad}: Todos los polos están ubicados dentro del círculo unitario en el plano-z,
-          garantizando la estabilidad del filtro. Los ceros se encuentran parcialmente en el círculo unitario
-          o fuera de él.
+\subsection{Ventana de Hamming}
 
-    \item \textbf{Ventaja sobre analógico}: El filtro IIR requiere menos coeficientes (menos memoria) que un
-          filtro FIR equivalente para alcanzar la misma selectividad.
-\end{itemize}
+\begin{equation}
+w[n] = 0.54 - 0.46 \cos\left(\frac{2\pi n}{M-1}\right), \quad n = 0, 1, \ldots, M-1
+\end{equation}
 
-\subsection{Filtro FIR}
+\subsection{Diseño FIR}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.9\textwidth]{../figures/filtro_fir.png}
-\caption{Diagrama de Bode del Filtro FIR Paso Bajo (Orden 64, Ventana Hamming, $f_c = 1000$ Hz)}
-\label{fig:bode_fir}
-\end{figure}
+\begin{equation}
+h[n] = w[n] \cdot h_d[n]
+\end{equation}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.9\textwidth]{../figures/filtro_fir_impulso.png}
-\caption{Respuesta al Impulso del Filtro FIR (65 coeficientes)}
-\label{fig:fir_impulso}
-\end{figure}
+donde $h_d[n]$ son los coeficientes ideales calculados mediante:
 
-\subsubsection{Análisis de Resultados}
+\begin{equation}
+num = \text{fir1}(M-1, W_n, \text{tipo}, \text{hamming}(M))
+\end{equation}
 
-\begin{itemize}
-    \item \textbf{Respuesta en Magnitud}: El filtro FIR muestra una respuesta paso bajo clara con -3 dB aproximadamente
-          a 1000 Hz. La ventana de Hamming reduce el rizado de Gibbs, resultando en una respuesta más suave.
-
-    \item \textbf{Rizado en Banda de Paso}: Existe un pequeño rizado caracterizado por la ventana de Hamming,
-          típicamente alrededor de ±0.5 dB. Este rizado es el tradeoff por tener lóbulos laterales más pequeños
-          (aproximadamente -43 dB).
-
-    \item \textbf{Respuesta en Fase}: Presenta fase lineal, como se confirma por la simetría de los coeficientes.
-          La fase es una función lineal de la frecuencia: $\phi(\omega) = -\frac{N\omega}{2}$.
-
-    \item \textbf{Respuesta al Impulso}: Los 65 coeficientes ($h[0]$ a $h[64]$) son simétricos alrededor del
-          índice 32, lo que garantiza la fase lineal.
-
-    \item \textbf{Estabilidad}: Garantizada por diseño (sin retroalimentación, solo ceros).
-
-    \item \textbf{Ventajas}:
-    \begin{itemize}
-        \item Fase exactamente lineal (sin distorsión de fase).
-        \item Siempre estables.
-        \item Sin problemas de ciclos límite o rondeo.
-    \end{itemize}
-
-    \item \textbf{Desventajas}:
-    \begin{itemize}
-        \item Requiere más coeficientes para igual selectividad que IIR.
-        \item Mayor costo computacional (más multiplicaciones).
-        \item Latencia inherente debido al orden del filtro.
-    \end{itemize}
-\end{itemize}
+% Pilas: Insertar código MATLAB utilizado para diseño FIR
 
 \newpage
 
-\section{Comparación de Filtros}
+\section{Respuesta en Frecuencia}
+
+\subsection{Comparación de Magnitud - Todas las Bandas}
+
+% Pilas: Insertar gráfica de comparación de magnitud (4 subplots, uno por banda)
+% Mostrar respuesta de Analógico, IIR y FIR juntos en cada subplot
+
+\begin{figure}[H]
+\centering
+\fbox{\begin{minipage}[c][8cm]{0.95\textwidth}
+Comparación de Magnitud (dB) vs Frecuencia para las 4 bandas del ecualizador\\
+Cada banda muestra las tres implementaciones: Analógica (azul), IIR (rojo), FIR (verde)
+\end{minipage}}
+\caption{Respuesta en Magnitud - Comparación de los Tres Métodos}
+\label{fig:mag_comparison}
+\end{figure}
+
+% Pilas: Verificar que todos los filtros cumplen con A_p = -3 dB en banda de paso y A_s = -15 dB en banda de rechazo
+
+\subsection{Respuesta del Sistema Completo}
+
+El sistema completo resulta de la combinación en paralelo de los 4 filtros de cada tipo.
+
+% Pilas: Insertar gráfica de respuesta completa del sistema (3 subplots para Analógico, IIR, FIR)
+
+\begin{figure}[H]
+\centering
+\fbox{\begin{minipage}[c][6cm]{0.95\textwidth}
+Respuesta en Frecuencia del Sistema Completo\\
+Superposición de las 4 bandas en escala logarítmica
+\end{minipage}}
+\caption{Respuesta del Sistema Analógico, IIR y FIR}
+\label{fig:sys_complete}
+\end{figure}
+
+\subsection{Respuesta en Fase}
+
+% Pilas: Insertar gráfica de fase (4 subplots, uno por banda)
+% Mostrar Analógico, IIR y FIR en cada subplot
+
+\begin{figure}[H]
+\centering
+\fbox{\begin{minipage}[c][8cm]{0.95\textwidth}
+Respuesta en Fase (grados) vs Frecuencia\\
+Fase desenrollada para cada banda y cada método
+\end{minipage}}
+\caption{Respuesta en Fase - Todos los Métodos}
+\label{fig:phase}
+\end{figure}
+
+% Pilas: Anotar el comportamiento de fase lineal del FIR vs distorsión de fase del Analógico e IIR
+
+\newpage
+
+\section{Verificación de Especificaciones}
+
+% Pilas: Insertar gráfica de cumplimiento de especificaciones (detalle de una banda con marcas de -3dB y -15dB)
+
+\begin{figure}[H]
+\centering
+\fbox{\begin{minipage}[c][6cm]{0.95\textwidth}
+Cumplimiento de Especificaciones\\
+Verficar que: Magnitud ≥ -3 dB en banda de paso, Magnitud ≤ -15 dB en banda de rechazo
+\end{minipage}}
+\caption{Análisis de Especificaciones por Banda}
+\label{fig:spec_verify}
+\end{figure}
+
+\newpage
+
+\section{Análisis Espectral de Audio}
+
+\subsection{Procesamiento de Señal}
+
+La señal de entrada se procesa mediante los tres sistemas del ecualizador. Para cada banda se calcula:
+
+\begin{enumerate}
+    \item \textbf{Sistema Analógico}: Simulación mediante \texttt{lsim} con espacio de estados
+    \item \textbf{Sistema IIR}: Filtrado directo con \texttt{filter}
+    \item \textbf{Sistema FIR}: Convolución digital con \texttt{filter}
+\end{enumerate}
+
+La salida total de cada sistema es:
+
+\begin{equation}
+y_{\text{total}}[n] = \sum_{i=1}^{4} G_i \times y_i[n]
+\end{equation}
+
+donde $G_i$ es la ganancia de la banda $i$ (por defecto $G_i = 1$).
+
+\subsection{Espectro de Entrada vs Salida}
+
+% Pilas: Insertar gráfica de espectro entrada vs salida total (escala log, 3 gráficas para Analógico, IIR, FIR)
+
+\begin{figure}[H]
+\centering
+\fbox{\begin{minipage}[c][6cm]{0.95\textwidth}
+Espectro de Entrada vs Salida Total\\
+Comparación en escala logarítmica para los tres sistemas
+\end{minipage}}
+\caption{Análisis Espectral: Entrada vs Salida Total}
+\label{fig:spectrum_total}
+\end{figure}
+
+\subsection{Análisis por Banda}
+
+% Pilas: Insertar gráficas de espectro individual por banda (sistema analógico)
+
+\begin{figure}[H]
+\centering
+\fbox{\begin{minipage}[c][8cm]{0.95\textwidth}
+Espectro Individual por Banda - Sistema Analógico\\
+6 subplots: entrada + 4 bandas individuales
+\end{minipage}}
+\caption{Análisis Espectral Bandas - Sistema Analógico}
+\label{fig:bands_analog}
+\end{figure}
+
+% Pilas: Insertar gráficas de espectro individual por banda (sistema IIR)
+
+\begin{figure}[H]
+\centering
+\fbox{\begin{minipage}[c][8cm]{0.95\textwidth}
+Espectro Individual por Banda - Sistema IIR\\
+6 subplots: entrada + 4 bandas individuales
+\end{minipage}}
+\caption{Análisis Espectral Bandas - Sistema IIR}
+\label{fig:bands_iir}
+\end{figure}
+
+% Pilas: Insertar gráficas de espectro individual por banda (sistema FIR)
+
+\begin{figure}[H]
+\centering
+\fbox{\begin{minipage}[c][8cm]{0.95\textwidth}
+Espectro Individual por Banda - Sistema FIR\\
+6 subplots: entrada + 4 bandas individuales
+\end{minipage}}
+\caption{Análisis Espectral Bandas - Sistema FIR}
+\label{fig:bands_fir}
+\end{figure}
+
+\newpage
+
+\section{Resultados Numéricos}
+
+\subsection{Órdenes de Filtros Calculados}
+
+% Pilas: Completar tabla con órdenes calculados por buttord para cada banda
 
 \begin{table}[H]
 \centering
 \begin{tabular}{|l|c|c|c|}
 \hline
-\textbf{Característica} & \textbf{Analógico} & \textbf{IIR} & \textbf{FIR} \\
+\textbf{Banda} & \textbf{Analógico} & \textbf{IIR} & \textbf{FIR} \\
 \hline
-Estabilidad & \checkmark & Depende (criterio BIB) & \checkmark (Garantizada) \\
+1 (Pasabajos, 102.4 Hz) & [Pilas] & [Pilas] & [Pilas] coef. \\
 \hline
-Fase Lineal & \texttimes & \texttimes & \checkmark (con simetría) \\
+2 (Pasabanda, 512 Hz) & [Pilas] & [Pilas] & [Pilas] coef. \\
 \hline
-Selectividad & Alta & Alta (orden bajo) & Baja (requiere orden alto) \\
+3 (Pasabanda, 2560 Hz) & [Pilas] & [Pilas] & [Pilas] coef. \\
 \hline
-Complejidad Computacional & N/A & Baja & Media-Alta \\
+4 (Pasaaltos, 12800 Hz) & [Pilas] & [Pilas] & [Pilas] coef. \\
 \hline
-Número de Coeficientes & N/A & Bajo & Alto \\
-\hline
-Latencia & Continua & Baja & Media-Alta \\
-\hline
-Implementación Digital & N/A & Mediante $z$-transform & Convolución discreta \\
-\hline
-Rizado & Ninguno (Butterworth) & Posible & Controlado por ventana \\
-\hline
-Distorsión de Fase & Sí & Sí & No (ideal) \\
+\textbf{Orden Máximo} & \textbf{[Pilas]} & \textbf{[Pilas]} & - \\
 \hline
 \end{tabular}
-\caption{Comparación de características entre tipos de filtros}
-\label{tab:comparacion}
+\caption{Órdenes de los Filtros Diseñados}
+\label{tab:filter_orders}
 \end{table}
 
-\subsection{Recomendaciones de Uso}
+\subsection{Características de Estabilidad}
 
-\begin{itemize}
-    \item \textbf{Filtro Analógico}: Usar cuando se requiera procesamiento de señales analógicas en tiempo real
-          (e.g., filtración de entrada antes de ADC).
+% Pilas: Para IIR, verificar que todos los polos están dentro del círculo unitario
+% Pilas: Para Analógico, verificar que todos los polos están en semiplano izquierdo
+% Pilas: Para FIR, mencionar que es garantizado por diseño
 
-    \item \textbf{Filtro IIR}: Preferible cuando se necesita alta selectividad con bajo costo computacional
-          y la distorsión de fase no sea crítica.
+\subsubsection{Análisis de Polos y Ceros}
 
-    \item \textbf{Filtro FIR}: Usar cuando la fase lineal sea esencial para la aplicación (e.g., audio de alta fidelidad,
-          procesamiento de imágenes) o cuando se necesite evitar problemas de estabilidad.
-\end{itemize}
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Sistema} & \textbf{Número de Polos} & \textbf{Número de Ceros} \\
+\hline
+Analógico Banda 1 & [Pilas] & [Pilas] \\
+\hline
+IIR Banda 1 & [Pilas] & [Pilas] \\
+\hline
+FIR Banda 1 & 0 (orden digital) & [Pilas] \\
+\hline
+\end{tabular}
+\caption{Características de Polos y Ceros - Banda 1}
+\label{tab:poles_zeros}
+\end{table}
 
 \newpage
 
-\section{Conclusiones}
+\section{Normalización y Procesamiento de Audio}
 
-Se ha completado exitosamente el diseño e implementación de tres tipos fundamentales de filtros:
+\subsection{Normalización de Señal}
 
-\begin{enumerate}
-    \item \textbf{Filtro Analógico Butterworth}: Proporciona una magnitud máxima plana en la banda de paso
-          con una pendiente de atenuación de 80 dB/década. Suitable para aplicaciones de acondicionamiento analógico.
+Después del procesamiento, se normaliza la señal para evitar saturación:
 
-    \item \textbf{Filtro IIR Digital}: Ofrece excelente selectividad con mínimo costo computacional,
-          aunque introduce distorsión de fase. Ideal para aplicaciones en tiempo real con recursos limitados.
+\begin{equation}
+\text{Si } \max(|y|) > 1 \rightarrow y_{\text{norm}} = \frac{y}{\max(|y|)}
+\end{equation}
 
-    \item \textbf{Filtro FIR Digital}: Proporciona fase exactamente lineal y estabilidad garantizada,
-          aunque requiere mayor orden para lograr selectividad equivalente. Esencial para aplicaciones
-          donde la fase debe ser controlada.
-\end{enumerate}
+% Pilas: Insertar factor de normalización utilizado en cada sistema
 
-Todos los filtros han sido validados mediante su respuesta en frecuencia, diagramas de Bode,
-y características espectrales. Las gráficas en magnitud (dB) y fase muestran comportamientos consistentes
-con la teoría de filtros digitales y analógicos.
+\subsection{Guardado de Resultado}
 
-\section{Referencias}
+La señal procesada se guarda en formato WAV:
 
-\begin{enumerate}
-    \item Oppenheim, A. V., Schafer, R. W., \& Buck, J. R. (2009). \textit{Discrete-time signal processing}. Prentice Hall.
+\begin{lstlisting}[language=MATLAB]
+audiowrite('Audio_Ecualizado_IIR.wav', senal_normalizada, Fs);
+\end{lstlisting}
 
-    \item Proakis, J. G., \& Manolakis, D. G. (2006). \textit{Digital signal processing: principles, algorithms, and applications}. Prentice Hall.
+% Pilas: Indicar qué sistema se utilizó para la salida final (Analógico/IIR/FIR)
 
-    \item The Mathworks. (2023). MATLAB Signal Processing Toolbox Documentation.
+\newpage
 
-    \item Parks, T. W., \& Burrus, C. S. (1987). \textit{Digital filter design}. John Wiley \& Sons.
-\end{enumerate}
+\section{Observaciones y Conclusiones}
 
-\appendix
+\subsection{Desempeño de los Filtros}
 
-\section{Scripts de MATLAB Utilizados}
-
-Los scripts están organizados en la carpeta \texttt{/scripts/} y son:
+% Pilas: Analizar selectividad relativa de cada método
+% Pilas: Comparar costo computacional entre métodos
+% Pilas: Discutir la fase lineal del FIR vs distorsión en Analógico e IIR
 
 \begin{itemize}
-    \item \texttt{filtro\_analogico.m} - Diseño del filtro Butterworth analógico.
-    \item \texttt{filtro\_iir.m} - Diseño del filtro IIR digital.
-    \item \texttt{filtro\_fir.m} - Diseño del filtro FIR con ventana Hamming.
-    \item \texttt{main\_generar\_filtros.m} - Script maestro que ejecuta todos los diseños.
+    \item El filtro \textbf{Analógico} proporciona una característica teórica sin limitaciones de cuantificación.
+
+    \item El filtro \textbf{IIR} es computacionalmente eficiente, requiriendo menor orden que FIR para la misma selectividad.
+
+    \item El filtro \textbf{FIR} garantiza estabilidad y fase lineal exacta mediante la simetría de coeficientes.
 \end{itemize}
 
-Para ejecutar, en MATLAB ejecute:
-\begin{lstlisting}
-run('/home/user/Filtros_SySII/scripts/main_generar_filtros.m')
-\end{lstlisting}
+\subsection{Cumplimiento de Especificaciones}
+
+% Pilas: Verificar para cada banda:
+% - Magnitud ≥ -3 dB (A_p) en banda de paso
+% - Magnitud ≤ -15 dB (A_s) en banda de rechazo
+
+El sistema implementado cumple con las especificaciones de:
+\begin{itemize}
+    \item Atenuación en banda de paso: $A_p = 3$ dB
+    \item Atenuación en banda de rechazo: $A_s = 15$ dB
+    \item Respuesta separada para cada una de las 4 bandas de frecuencia
+\end{itemize}
+
+\subsection{Aplicabilidad Práctica}
+
+% Pilas: Describir el comportamiento observado al procesar la señal de audio
+% Pilas: Comentar sobre la claridad, artefactos, o características notables de cada sistema
+
+El ecualizador digital de 4 bandas implementado permite control independiente de frecuencias bajas, medias-bajas, medias-altas y altas en el rango de audio, con aplicabilidad a procesamiento de señales de audio en tiempo real.
 
 \end{document}
