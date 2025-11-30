@@ -125,27 +125,24 @@ f_{\text{central}} = [102.4, 512, 2560, 12800] \text{ Hz}
 
 Las frecuencias de corte se calculan mediante:
 
-\begin{align}
-f_{\text{corte}}(1) &= \frac{f_{\text{central}}(1)}{\sqrt{5}} = 45.77 \text{ Hz} \\
-f_{\text{corte}}(i) &= \sqrt{f_{\text{central}}(i-1) \cdot f_{\text{central}}(i)} \quad \text{para } i = 2, 3, 4 \\
-f_{\text{corte}}(5) &= f_{\text{central}}(4) \cdot \sqrt{5} = 28618.37 \text{ Hz}
-\end{align}
+\begin{align*}
+f_{\text{corte}}(i) &= \sqrt{f_{\text{central}}(i-1) \cdot f_{\text{central}}(i)} \quad \text{para } i = 2, 3, 4 
+\end{align*}
 
-% Pilas: Insertar tabla con valores calculados de f_corte(1) a f_corte(5)
 
 \begin{table}[H]
 \centering
 \begin{tabular}{|c|c|c|c|}
 \hline
-\textbf{Banda} & \textbf{Tipo} & \textbf{f\_corte (Hz)} & \textbf{f\_central (Hz)} \\
+\textbf{Banda} & \textbf{Tipo} & \textbf{f\_Corte (Hz)} & \textbf{f\_Central (Hz)} \\
 \hline
-1 & Pasabajos & [Pilas: 45.77 - 228.70] & 102.4 \\
+1 & Pasabajos & 228.70 & 102.4 \\
 \hline
-2 & Pasabanda & [Pilas: 228.70 - 1143.55] & 512 \\
+2 & Pasabanda & 228.70 - 1143.55 & 512 \\
 \hline
-3 & Pasabanda & [Pilas: 1143.55 - 5726.81] & 2560 \\
+3 & Pasabanda & 1143.55 - 5726.81 & 2560 \\
 \hline
-4 & Pasaaltos & [Pilas: 5726.81 - 28618.37] & 12800 \\
+4 & Pasaaltos & 5726.81 - 28618.37 & 12800 \\
 \hline
 \end{tabular}
 \caption{Bandas de Frecuencia del Ecualizador}
@@ -160,55 +157,55 @@ f_{\text{corte}}(5) &= f_{\text{central}}(4) \cdot \sqrt{5} = 28618.37 \text{ Hz
 
 Utilizando la función \texttt{buttord}, se determina el orden mínimo requerido para cumplir las especificaciones en cada banda:
 
-\begin{equation}
+\begin{equation*}
 [n, W_n] = \text{buttord}(W_p, W_s, A_p, A_s, \text{'s'})
-\end{equation}
+\end{equation*}
 
 \subsubsection{Banda 1: Pasabajos}
 
-\begin{align}
-W_{p1} &= 2\pi f_{\text{corte}}(2) = 2\pi \times 228.70 = 1436.74 \text{ rad/s} \\
-W_{s1} &= 2\pi f_{\text{central}}(1) = 2\pi \times 102.4 = 643.41 \text{ rad/s}
-\end{align}
+\begin{align*}
+\omega_{p1} &= 2\pi f_{\text{corte}}(2) = 2\pi \times 228.70 = 1436.74 \text{ rad/s} \\
+\omega_{s1} &= 2\pi f_{\text{central}}(1) = 2\pi \times 102.4 = 643.41 \text{ rad/s}
+\end{align*}
 
 % Pilas: Insertar orden calculado n1 y W_n1
 
 \subsubsection{Banda 2: Pasabanda}
 
-\begin{align}
-W_{p2} &= 2\pi [f_{\text{corte}}(2), f_{\text{corte}}(3)] \text{ rad/s} \\
-W_{s2} &= 2\pi [f_{\text{central}}(1), f_{\text{central}}(3)] \text{ rad/s}
-\end{align}
+\begin{align*}
+\omega_{p2} &= 2\pi [f_{\text{corte}}(2), f_{\text{corte}}(3)] \text{ rad/s} \\
+\omega_{s2} &= 2\pi [f_{\text{central}}(1), f_{\text{central}}(3)] \text{ rad/s}
+\end{align*}
 
 \subsubsection{Banda 3: Pasabanda}
 
-\begin{align}
-W_{p3} &= 2\pi [f_{\text{corte}}(3), f_{\text{corte}}(4)] \text{ rad/s} \\
-W_{s3} &= 2\pi [f_{\text{central}}(2), f_{\text{central}}(4)] \text{ rad/s}
-\end{align}
+\begin{align*}
+\omega_{p3} &= 2\pi [f_{\text{corte}}(3), f_{\text{corte}}(4)] \text{ rad/s} \\
+\omega_{s3} &= 2\pi [f_{\text{central}}(2), f_{\text{central}}(4)] \text{ rad/s}
+\end{align*}
 
 \subsubsection{Banda 4: Pasaaltos}
 
-\begin{align}
-W_{p4} &= 2\pi f_{\text{corte}}(4) = 2\pi \times 5726.81 = 35962.84 \text{ rad/s} \\
-W_{s4} &= 2\pi f_{\text{central}}(3) = 2\pi \times 2560 = 16085.29 \text{ rad/s}
-\end{align}
+\begin{align*}
+\omega_{p4} &= 2\pi f_{\text{corte}}(4) = 2\pi \times 5726.81 = 35962.84 \text{ rad/s} \\
+\omega_{s4} &= 2\pi f_{\text{central}}(3) = 2\pi \times 2560 = 16085.29 \text{ rad/s}
+\end{align*}
 
 % Pilas: Insertar orden calculado n4 y W_n4
 
 El orden máximo entre todas las bandas se utiliza para todos los filtros analógicos:
 
-\begin{equation}
-n_{\max\_analog} = \max(n_1, n_2, n_3, n_4) = \text{ [Pilas: Insertar valor]}
-\end{equation}
+\begin{equation*}
+n_{\max\_analog} = \max(n_1, n_2, n_3, n_4) = 3 \text{ Pasabajos y Pasaltos } \text{ - } 6 \text{ Pasabandas}
+\end{equation*}
 
 \subsection{Función de Transferencia}
 
 La función de transferencia se obtiene mediante:
 
-\begin{equation}
+\begin{equation*}
 [num, den] = \text{butter}(n_{\max}, W_n, \text{tipo}, \text{'s'})
-\end{equation}
+\end{equation*}
 
 donde \textit{tipo} es 'low' para pasabajos, 'bandpass' para pasabanda, y 'high' para pasaaltos.
 
@@ -227,46 +224,46 @@ w_n = \frac{f}{F_s/2}, \quad F_{\text{Nyquist}} = \frac{F_s}{2} = 32000 \text{ H
 \end{equation}
 
 \subsubsection{Banda 1: Pasabajos}
-
-\begin{align}
+*
+\begin{align*}
 w_{p1} &= \frac{f_{\text{corte}}(2)}{32000} = \frac{228.70}{32000} = 0.00715 \\
 w_{s1} &= \frac{f_{\text{central}}(1)}{32000} = \frac{102.4}{32000} = 0.00320
-\end{align}
+\end{align*}
 
 \subsubsection{Banda 2: Pasabanda}
 
-\begin{align}
+\begin{align*}
 w_{p2} &= \frac{[228.70, 1143.55]}{32000} = [0.00715, 0.03573] \\
 w_{s2} &= \frac{[102.4, 2560]}{32000} = [0.00320, 0.08000]
-\end{align}
+\end{align*}
 
 \subsubsection{Banda 3: Pasabanda}
 
-\begin{align}
+\begin{align*}
 w_{p3} &= \frac{[1143.55, 5726.81]}{32000} = [0.03573, 0.17896] \\
 w_{s3} &= \frac{[512, 12800]}{32000} = [0.01600, 0.40000]
-\end{align}
+\end{align*}
 
 \subsubsection{Banda 4: Pasaaltos}
 
-\begin{align}
+\begin{align*}
 w_{p4} &= \frac{f_{\text{corte}}(4)}{32000} = \frac{5726.81}{32000} = 0.17896 \\
 w_{s4} &= \frac{f_{\text{central}}(3)}{32000} = \frac{2560}{32000} = 0.08000
-\end{align}
+\end{align*}
 
 \subsection{Cálculo de Orden Digital}
 
-\begin{equation}
+\begin{equation*}
 [n, W_n] = \text{buttord}(w_p, w_s, A_p, A_s)
-\end{equation}
+\end{equation*}
 
 % Pilas: Insertar órdenes calculados n_iir(1) a n_iir(4)
 
 El orden máximo se asigna a todos los filtros:
 
-\begin{equation}
-n_{\max\_iir} = \max(n_{\text{iir,1}}, n_{\text{iir,2}}, n_{\text{iir,3}}, n_{\text{iir,4}}) = \text{ [Pilas: Insertar valor]}
-\end{equation}
+\begin{equation*}
+n_{\max\_iir} = \max(n_{\text{iir,1}}, n_{\text{iir,2}}, n_{\text{iir,3}}, n_{\text{iir,4}}) = 3 \text{ Pasabajos y Pasaltos } \text{ - } 6 \text{ Pasabandas}
+\end{equation*}
 
 \subsection{Diseño Digital}
 
@@ -275,10 +272,6 @@ n_{\max\_iir} = \max(n_{\text{iir,1}}, n_{\text{iir,2}}, n_{\text{iir,3}}, n_{\t
 \end{equation}
 
 % Pilas: Insertar código MATLAB utilizado para diseño IIR
-
-\newpage
-
-\section{Diseño de Filtros FIR (Ventana Hamming)}
 
 \subsection{Cálculo de Orden}
 
@@ -292,40 +285,41 @@ donde $\Delta f$ es el ancho de la banda de transición.
 
 \subsubsection{Banda 1: Pasabajos}
 
-\begin{align}
+\begin{align*}
 \Delta f_1 &= |f_{\text{central}}(1) - f_{\text{corte}}(2)| = |102.4 - 228.70| = 126.30 \text{ Hz} \\
-M_1 &= \text{ceil}\left(\frac{3.3 \times 64000}{126.30}\right) = \text{ [Pilas: Insertar valor]}
-\end{align}
+M_1 &= \text{ceil}\left(\frac{3.3 \times 64000}{126.30}\right) = 747
+\end{align*}
 
 Si $M$ es par, se incrementa en 1. Límite máximo: 1000 coeficientes.
 
 \subsubsection{Banda 2: Pasabanda}
 
-\begin{align}
+\begin{align*}
 \Delta f_2 &= \min(|f_{\text{corte}}(2) - f_{\text{central}}(1)|, |f_{\text{central}}(3) - f_{\text{corte}}(3)|) \\
 &= \min(|228.70 - 102.4|, |2560 - 1143.55|) = 126.30 \text{ Hz} \\
-M_2 &= \text{ [Pilas: Insertar valor]}
-\end{align}
+M_2 &= 1001
+\end{align*}
 
 \subsubsection{Banda 3: Pasabanda}
 
-\begin{align}
+\begin{align*}
 \Delta f_3 &= \min(|f_{\text{corte}}(3) - f_{\text{central}}(2)|, |f_{\text{central}}(4) - f_{\text{corte}}(4)|) \\
 &= \min(|1143.55 - 512|, |12800 - 5726.81|) = 631.55 \text{ Hz} \\
-M_3 &= \text{ [Pilas: Insertar valor]}
-\end{align}
+M_3 &= 335
+\end{align*}
 
 \subsubsection{Banda 4: Pasaaltos}
 
-\begin{align}
+\begin{align*}
 \Delta f_4 &= |f_{\text{corte}}(4) - f_{\text{central}}(3)| = |5726.81 - 2560| = 3166.81 \text{ Hz} \\
-M_4 &= \text{ [Pilas: Insertar valor]}
-\end{align}
+M_4 &= 67
+\end{align*}
 
 \subsection{Ventana de Hamming}
 
 \begin{equation}
-w[n] = 0.54 - 0.46 \cos\left(\frac{2\pi n}{M-1}\right), \quad n = 0, 1, \ldots, M-1
+w[n] = 0.54 - 0.46 \cos\left(\frac{\pi (n+M)}{M
+}\right), \quad n = -M, \ldots, -1, 0, 1, \ldots, M
 \end{equation}
 
 \subsection{Diseño FIR}
@@ -340,10 +334,6 @@ donde $h_d[n]$ son los coeficientes ideales calculados mediante:
 num = \text{fir1}(M-1, W_n, \text{tipo}, \text{hamming}(M))
 \end{equation}
 
-% Pilas: Insertar código MATLAB utilizado para diseño FIR
-
-\newpage
-
 \section{Respuesta en Frecuencia}
 
 \subsection{Comparación de Magnitud - Todas las Bandas}
@@ -353,13 +343,11 @@ num = \text{fir1}(M-1, W_n, \text{tipo}, \text{hamming}(M))
 
 \begin{figure}[H]
 \centering
-\fbox{\begin{minipage}[c][8cm]{0.95\textwidth}
-Comparación de Magnitud (dB) vs Frecuencia para las 4 bandas del ecualizador\\
-Cada banda muestra las tres implementaciones: Analógica (azul), IIR (rojo), FIR (verde)
-\end{minipage}}
+\includegraphics[width=0.85\linewidth]{images/comparacionMagnitud.png}
 \caption{Respuesta en Magnitud - Comparación de los Tres Métodos}
 \label{fig:mag_comparison}
 \end{figure}
+
 
 % Pilas: Verificar que todos los filtros cumplen con A_p = -3 dB en banda de paso y A_s = -15 dB en banda de rechazo
 
@@ -371,13 +359,12 @@ El sistema completo resulta de la combinación en paralelo de los 4 filtros de c
 
 \begin{figure}[H]
 \centering
-\fbox{\begin{minipage}[c][6cm]{0.95\textwidth}
-Respuesta en Frecuencia del Sistema Completo\\
-Superposición de las 4 bandas en escala logarítmica
-\end{minipage}}
+\includegraphics[width=0.85\linewidth]{images/sistemaCompleto.png}
 \caption{Respuesta del Sistema Analógico, IIR y FIR}
 \label{fig:sys_complete}
 \end{figure}
+
+
 
 \subsection{Respuesta en Fase}
 
@@ -386,13 +373,12 @@ Superposición de las 4 bandas en escala logarítmica
 
 \begin{figure}[H]
 \centering
-\fbox{\begin{minipage}[c][8cm]{0.95\textwidth}
-Respuesta en Fase (grados) vs Frecuencia\\
-Fase desenrollada para cada banda y cada método
-\end{minipage}}
+\includegraphics[width=0.85\linewidth]{images/respuestaFase.png}
 \caption{Respuesta en Fase - Todos los Métodos}
 \label{fig:phase}
 \end{figure}
+
+
 
 % Pilas: Anotar el comportamiento de fase lineal del FIR vs distorsión de fase del Analógico e IIR
 
@@ -404,15 +390,36 @@ Fase desenrollada para cada banda y cada método
 
 \begin{figure}[H]
 \centering
-\fbox{\begin{minipage}[c][6cm]{0.95\textwidth}
-Cumplimiento de Especificaciones\\
-Verficar que: Magnitud ≥ -3 dB en banda de paso, Magnitud ≤ -15 dB en banda de rechazo
-\end{minipage}}
-\caption{Análisis de Especificaciones por Banda}
+\includegraphics[width=0.85\linewidth]{images/verificacionAnalogo.png}
+\caption{Verificación de Especificaciones por Banda. Sistema análogo.}
 \label{fig:spec_verify}
 \end{figure}
 
-\newpage
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{images/verificacionBilineal.png}
+    \caption{Verificación de Especificaciones por Banda. Sistema IIR bilineal.}
+    \label{fig:placeholder}
+\end{figure}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{images/verificacionInvar.png}
+    \caption{Verificación de Especificaciones por Banda. Sistema IIR por invarianza del impulso.}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{images/verificacionFir.png}
+    \caption{Verificación de Especificaciones por Banda. Sistema FIR.}
+    \label{fig:placeholder}
+\end{figure}
+
+
+
+
 
 \section{Análisis Espectral de Audio}
 
@@ -438,19 +445,26 @@ donde $G_i$ es la ganancia de la banda $i$ (por defecto $G_i = 1$).
 
 % Pilas: Insertar gráfica de espectro entrada vs salida total (escala log, 3 gráficas para Analógico, IIR, FIR)
 
+
 \begin{figure}[H]
-\centering
-\fbox{\begin{minipage}[c][6cm]{0.95\textwidth}
-Espectro de Entrada vs Salida Total\\
-Comparación en escala logarítmica para los tres sistemas
-\end{minipage}}
-\caption{Análisis Espectral: Entrada vs Salida Total}
-\label{fig:spectrum_total}
+    \centering
+    \includegraphics[width=0.85\linewidth]{images/audioComparacion.png}
+    \caption{Análisis Espectral: Entrada vs Salida. Comparación de todos los sistemas.}
+    \label{fig:placeholder}
 \end{figure}
+
+
 
 \subsection{Análisis por Banda}
 
 % Pilas: Insertar gráficas de espectro individual por banda (sistema analógico)
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{images/audioAnalogo.png}
+    \caption{Espectro por banda. Sistema análogo.}
+    \label{fig:placeholder}
+\end{figure}
 
 \begin{figure}[H]
 \centering
@@ -496,51 +510,49 @@ Espectro Individual por Banda - Sistema FIR\\
 
 \begin{table}[H]
 \centering
-\begin{tabular}{|l|c|c|c|}
+\begin{tabular}{|l|c|c|c|c|}
 \hline
-\textbf{Banda} & \textbf{Analógico} & \textbf{IIR} & \textbf{FIR} \\
+\textbf{Banda} & \textbf{Analógico} & \textbf{IIR (Bilineal)} & \textbf{IIR (Invar)} & \textbf{FIR} \\
 \hline
-1 (Pasabajos, 102.4 Hz) & [Pilas] & [Pilas] & [Pilas] coef. \\
+1 (Pasabajos, 102.4 Hz) & 3 & 3 & nan & 747 \\
 \hline
-2 (Pasabanda, 512 Hz) & [Pilas] & [Pilas] & [Pilas] coef. \\
+2 (Pasabanda, 512 Hz) & 6 & 6 & nan & 1001 \\
 \hline
-3 (Pasabanda, 2560 Hz) & [Pilas] & [Pilas] & [Pilas] coef. \\
+3 (Pasabanda, 2560 Hz) & 6 & 6 & nan & 335 \\
 \hline
-4 (Pasaaltos, 12800 Hz) & [Pilas] & [Pilas] & [Pilas] coef. \\
+4 (Pasaaltos, 12800 Hz) & 3 & 3 & nan & 67 \\
 \hline
-\textbf{Orden Máximo} & \textbf{[Pilas]} & \textbf{[Pilas]} & - \\
+\textbf{Orden Máximo} & \textbf{6} & \textbf{6} & - & 1001 \\
 \hline
 \end{tabular}
 \caption{Órdenes de los Filtros Diseñados}
 \label{tab:filter_orders}
 \end{table}
 
-\subsection{Características de Estabilidad}
+%\subsection{Características de Estabilidad}
 
 % Pilas: Para IIR, verificar que todos los polos están dentro del círculo unitario
 % Pilas: Para Analógico, verificar que todos los polos están en semiplano izquierdo
 % Pilas: Para FIR, mencionar que es garantizado por diseño
 
-\subsubsection{Análisis de Polos y Ceros}
+%\subsubsection{Análisis de Polos y Ceros}
 
-\begin{table}[H]
-\centering
-\begin{tabular}{|l|c|c|}
-\hline
-\textbf{Sistema} & \textbf{Número de Polos} & \textbf{Número de Ceros} \\
-\hline
-Analógico Banda 1 & [Pilas] & [Pilas] \\
-\hline
-IIR Banda 1 & [Pilas] & [Pilas] \\
-\hline
-FIR Banda 1 & 0 (orden digital) & [Pilas] \\
-\hline
-\end{tabular}
-\caption{Características de Polos y Ceros - Banda 1}
-\label{tab:poles_zeros}
-\end{table}
-
-\newpage
+%\begin{table}[H]
+%\centering
+%\begin{tabular}{|l|c|c|}
+%\hline
+%\textbf{Sistema} & \textbf{Número de Polos} & \textbf{Número de Ceros} \\
+%\hline
+%Analógico Banda 1 & [Pilas] & [Pilas] \\
+%\hline
+%IIR Banda 1 & [Pilas] & [Pilas] \\
+%\hline
+%FIR Banda 1 & 0 (orden digital) & [Pilas] \\
+%\hline
+%\end{tabular}
+%\caption{Características de Polos y Ceros - Banda 1}
+%\label{tab:poles_zeros}
+%\end{table}
 
 \section{Normalización y Procesamiento de Audio}
 
@@ -554,52 +566,54 @@ Después del procesamiento, se normaliza la señal para evitar saturación:
 
 % Pilas: Insertar factor de normalización utilizado en cada sistema
 
+
+\subsection{Filtros analógicos}
+Un filtro analógico se puede expresar con una función de transferencia de la forma:
+
+\begin{equation}
+    H(s) = \frac{b_0s^m+b_1s^{m-1}+...+b_{m-1}s+b_m}{a_0s^n+a_1s^{n-1}+...+a_{n-1}s+a_n}
+\end{equation}
+Cuyo orden $N$ es el mayor entre $n$ y $m$. Es posible escribirse a partir de sus residuos ($r_i$), polos ($p_i$) y ganancia ($k(s)$).
+\begin{equation}
+    H(s) = k(s) + \frac{r_2}{s-p_1} + \frac{r_2}{s-p_2} + ... + \frac{r_{N-1}}{s-p_{N-1}} + \frac{r_N}{s-p_N}
+\end{equation}
+El resultado es un suma de fracciones de orden 1, lo cual es puede traducir a conectar en paralelos varios sistemas de orden 1.
+
+\subsection{Filtros IIR}
+De manera similar, un filtro digital IIR puede expresar se como una función de transferencia, en el dominio $z$. Usando potencias positivas se tiene:
+
+\begin{equation}
+    H(z) = \frac{b_0z^m+b_1z^{m-1}+...+b_{m-1}z+b_m}{a_0z^n+a_1z^{n-1}+...+a_{n-1}z+a_n}
+\end{equation}
+
+
+
+Al igual que para el caso análogo, se puede disminuir el orden usando fracciones parciales. Resultado usando potencias positivas:
+\begin{equation}
+    H(z) = k(z) + \frac{r_2}{z-p_1} + \frac{r_2}{z-p_2} + ... + \frac{r_{N-1}}{z-p_{N-1}} + \frac{r_N}{z-p_N}
+\end{equation}
+
+\subsection{Filtros FIR}
+La función de transferencia de un filtro FIR es un polinomio, o con denominador igual a 1. Esto impide realizar fracciones de orden que nos permitirían diminuir el orden del filtro.
+
+\subsection{Aplicación en Matlab}
+Para calcular fracciones parciales basta con usar la función residue(numerador, denominador). Así se obtienen los residuos, polos y ganancias que luego podrán ser mostrados.
+\begin{lstlisting}[language=MATLAB]
+ [r, p, k] = residue(numerador, denominador);
+\end{lstlisting}
+
+
+
+
+
 \subsection{Guardado de Resultado}
 
-La señal procesada se guarda en formato WAV:
+La señal procesada se guarda en formato WAV, a continuacion se presenta un ejemplo si se usara el sistema con filtros IIR de transformacion bilineal:
 
 \begin{lstlisting}[language=MATLAB]
 audiowrite('Audio_Ecualizado_IIR.wav', senal_normalizada, Fs);
 \end{lstlisting}
 
 % Pilas: Indicar qué sistema se utilizó para la salida final (Analógico/IIR/FIR)
-
-\newpage
-
-\section{Observaciones y Conclusiones}
-
-\subsection{Desempeño de los Filtros}
-
-% Pilas: Analizar selectividad relativa de cada método
-% Pilas: Comparar costo computacional entre métodos
-% Pilas: Discutir la fase lineal del FIR vs distorsión en Analógico e IIR
-
-\begin{itemize}
-    \item El filtro \textbf{Analógico} proporciona una característica teórica sin limitaciones de cuantificación.
-
-    \item El filtro \textbf{IIR} es computacionalmente eficiente, requiriendo menor orden que FIR para la misma selectividad.
-
-    \item El filtro \textbf{FIR} garantiza estabilidad y fase lineal exacta mediante la simetría de coeficientes.
-\end{itemize}
-
-\subsection{Cumplimiento de Especificaciones}
-
-% Pilas: Verificar para cada banda:
-% - Magnitud ≥ -3 dB (A_p) en banda de paso
-% - Magnitud ≤ -15 dB (A_s) en banda de rechazo
-
-El sistema implementado cumple con las especificaciones de:
-\begin{itemize}
-    \item Atenuación en banda de paso: $A_p = 3$ dB
-    \item Atenuación en banda de rechazo: $A_s = 15$ dB
-    \item Respuesta separada para cada una de las 4 bandas de frecuencia
-\end{itemize}
-
-\subsection{Aplicabilidad Práctica}
-
-% Pilas: Describir el comportamiento observado al procesar la señal de audio
-% Pilas: Comentar sobre la claridad, artefactos, o características notables de cada sistema
-
-El ecualizador digital de 4 bandas implementado permite control independiente de frecuencias bajas, medias-bajas, medias-altas y altas en el rango de audio, con aplicabilidad a procesamiento de señales de audio en tiempo real.
 
 \end{document}
