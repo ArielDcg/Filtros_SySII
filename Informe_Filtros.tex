@@ -271,7 +271,51 @@ n_{\max\_iir} = \max(n_{\text{iir,1}}, n_{\text{iir,2}}, n_{\text{iir,3}}, n_{\t
 [num, den] = \text{butter}(n_{\max\_iir}, W_n, \text{tipo})
 \end{equation}
 
-% Pilas: Insertar código MATLAB utilizado para diseño IIR
+% Pilas: Insertar código MATLAB utilizado para diseño IIR Bilineal
+
+\newpage
+
+\section{Diseño de Filtros IIR (Invarianza al Impulso)}
+
+\subsection{Principio de Invarianza al Impulso}
+
+El método de invarianza al impulso convierte un filtro analógico a uno digital haciendo que la respuesta al impulso del filtro digital sea una versión muestreada de la respuesta al impulso analógico:
+
+\begin{equation}
+h_d[n] = T \cdot h_a(nT), \quad n = 0, 1, 2, \ldots
+\end{equation}
+
+donde $T = 1/F_s$ es el período de muestreo.
+
+\subsection{Ventajas de Invarianza al Impulso}
+
+\begin{itemize}
+    \item Preserva exactamente la respuesta al impulso del filtro analógico en los instantes de muestreo.
+    \item Mantiene la estabilidad: si el filtro analógico es estable, el digital también lo será.
+    \item Adecuado para filtros con respuestas al impulso cortas (como Butterworth).
+\end{itemize}
+
+\subsection{Cálculo de Orden}
+
+Para invarianza al impulso, se utiliza el mismo análisis de orden que para el diseño analógico:
+
+\begin{equation}
+n_{\max\_inv} = \max(n_{\text{analog}}, n_{\text{inv},4}) = 3
+\end{equation}
+
+\subsection{Implementación en MATLAB}
+
+La conversión de filtros analógicos a digitales mediante invarianza al impulso se realiza usando:
+
+\begin{equation}
+[\text{num}_d, \text{den}_d] = \text{impinvar}(\text{num}_a, \text{den}_a, F_s)
+\end{equation}
+
+% Pilas: Insertar código MATLAB utilizado para diseño IIR Invarianza
+
+\newpage
+
+\section{Diseño de Filtros FIR (Ventana Hamming)}
 
 \subsection{Cálculo de Orden}
 
@@ -514,15 +558,15 @@ Espectro Individual por Banda - Sistema FIR\\
 \hline
 \textbf{Banda} & \textbf{Analógico} & \textbf{IIR (Bilineal)} & \textbf{IIR (Invar)} & \textbf{FIR} \\
 \hline
-1 (Pasabajos, 102.4 Hz) & 3 & 3 & nan & 747 \\
+1 (Pasabajos, 102.4 Hz) & 3 & 3 & 3 & 746 coef. \\
 \hline
-2 (Pasabanda, 512 Hz) & 6 & 6 & nan & 1001 \\
+2 (Pasabanda, 512 Hz) & 3 & 3 & 3 & 999 coef. \\
 \hline
-3 (Pasabanda, 2560 Hz) & 6 & 6 & nan & 335 \\
+3 (Pasabanda, 2560 Hz) & 3 & 3 & 3 & 334 coef. \\
 \hline
-4 (Pasaaltos, 12800 Hz) & 3 & 3 & nan & 67 \\
+4 (Pasaaltos, 12800 Hz) & 3 & 3 & 3 & 66 coef. \\
 \hline
-\textbf{Orden Máximo} & \textbf{6} & \textbf{6} & - & 1001 \\
+\textbf{Orden Máximo} & \textbf{3} & \textbf{3} & \textbf{3} & \textbf{999} \\
 \hline
 \end{tabular}
 \caption{Órdenes de los Filtros Diseñados}
